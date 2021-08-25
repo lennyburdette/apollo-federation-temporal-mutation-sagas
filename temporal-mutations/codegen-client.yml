@@ -1,0 +1,10 @@
+overwrite: true
+schema: "../supergraph.graphql"
+documents: "src/**/*.graphql"
+generates:
+  src/activities/index.ts:
+    plugins:
+      - typescript
+      - typescript-operations
+      # - typescript-document-nodes
+      - "./plugin.js"

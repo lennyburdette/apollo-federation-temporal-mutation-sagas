@@ -1,0 +1,33 @@
+directive @tag(name: String!) repeatable on FIELD_DEFINITION
+
+type Query {
+  order(id: ID!): Order
+}
+
+type Mutation {
+  capturePayment(input: CapturePaymentInput!): CapturePaymentResult!
+    @tag(name: "internal")
+}
+
+type Order @key(fields: "id") {
+  id: ID!
+  seats: [Seat!]!
+}
+
+type Seat {
+  id: ID!
+}
+
+input CapturePaymentInput {
+  paymentNonce: String!
+}
+
+union CapturePaymentResult = CapturePaymentSuccess | CapturePaymentError
+
+type CapturePaymentSuccess {
+  confirmationCode: String!
+}
+
+type CapturePaymentError {
+  message: String!
+}

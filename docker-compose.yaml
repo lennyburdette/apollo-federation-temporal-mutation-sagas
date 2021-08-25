@@ -1,0 +1,38 @@
+services:
+  gateway:
+    image: ghcr.io/apollosolutions/gateway
+    volumes:
+      - ./supergraph.graphql:/etc/config/supergraph.graphql
+    environment:
+      - APOLLO_SCHEMA_CONFIG_EMBEDDED=/etc/config/supergraph.graphql
+    ports:
+      - 4000:4000
+  orders:
+    build: ./services/orders
+    volumes:
+      - ./services/orders/src:/web/src
+  inventory:
+    build: ./services/inventory
+    volumes:
+      - ./services/inventory/src:/web/src
+  notifications:
+    build: ./services/notifications
+    volumes:
+      - ./services/notifications/src:/web/src
+  mutations:
+    build:
+      context: ./temporal-mutations
+      dockerfile: server.Dockerfile
+    volumes:
+      - ./temporal-mutations/src:/web/src
+      - ./temporal-mutations/lib:/web/lib
+    command: yarn dev:server
+    ports:
+      - "4001:4000"
+  # mutations-worker:
+  #   build:
+  #     context: ./temporal-mutations
+  #     dockerfile: worker.Dockerfile
+  #   volumes:
+  #     - ./temporal-mutations/lib:/web/lib
+  #   command: yarn dev:worker

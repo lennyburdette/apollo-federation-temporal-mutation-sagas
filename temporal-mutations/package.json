@@ -1,0 +1,41 @@
+{
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build:worker": "tsc --build src/worker/tsconfig.json",
+    "build:worker.watch": "tsc --build --watch src/worker/tsconfig.json",
+    "build:server": "tsc --build src/server/tsconfig.json",
+    "build:server.watch": "tsc --build --watch src/server/tsconfig.json",
+    "start:worker": "node lib/worker",
+    "start:server": "node lib/server",
+    "gql:client": "graphql-codegen --config codegen-client.yml",
+    "gql:server": "graphql-codegen --config codegen-server.yml",
+    "dev:worker": "concurrently \"yarn build:worker.watch\" \"nodemon lib/worker\"",
+    "dev:server": "concurrently \"yarn build:server.watch\" \"nodemon lib/server\""
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "2.1.1",
+    "@graphql-codegen/introspection": "2.1.0",
+    "@graphql-codegen/typescript": "2.1.2",
+    "@graphql-codegen/typescript-document-nodes": "^2.1.2",
+    "@graphql-codegen/typescript-graphql-request": "^4.1.2",
+    "@graphql-codegen/typescript-operations": "2.1.2",
+    "@graphql-codegen/typescript-resolvers": "2.1.2",
+    "@tsconfig/node14": "^1.0.0",
+    "@types/make-fetch-happen": "^9.0.0",
+    "typescript": "^4.2.2"
+  },
+  "name": "temporal-mutations",
+  "dependencies": {
+    "@apollo/federation": "^0.29.0",
+    "@urql/core": "^2.3.1",
+    "apollo-server": "^3.2.0",
+    "concurrently": "^6.2.1",
+    "graphql": "^15.5.1",
+    "graphql-request": "^3.5.0",
+    "make-fetch-happen": "^9.1.0",
+    "node-fetch": "^2.6.1",
+    "nodemon": "^2.0.12",
+    "temporalio": "^0.3.0"
+  }
+}

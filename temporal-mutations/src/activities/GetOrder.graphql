@@ -1,0 +1,8 @@
+query GetOrder($orderId: ID!) {
+  order(id: $orderId) {
+    id
+    seats {
+      id
+    }
+  }
+}

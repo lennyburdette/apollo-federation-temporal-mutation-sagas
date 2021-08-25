@@ -1,0 +1,43 @@
+directive @tag(name: String!) repeatable on FIELD_DEFINITION
+
+type Seat {
+  id: ID!
+}
+
+type Mutation {
+  reserveSeats(input: ReserveSeatsInput!): ReserveSeatsResult!
+    @tag(name: "internal")
+  releaseSeats(input: ReleaseSeatsInput!): ReleaseSeatsResult!
+    @tag(name: "internal")
+}
+
+input ReserveSeatsInput {
+  seatIds: [ID!]!
+}
+
+union ReserveSeatsResult =
+    ReserveSeatsSuccess
+  | ReserveSeatsError_SeatsUnavailable
+
+type ReserveSeatsSuccess {
+  reservationId: ID!
+}
+
+type ReserveSeatsError_SeatsUnavailable {
+  seatsUnavailable: [Seat!]!
+  seatsAvailable: [Seat!]!
+}
+
+input ReleaseSeatsInput {
+  reservationId: ID!
+}
+
+union ReleaseSeatsResult = ReleaseSeatsSuccess | ReleaseSeatsError
+
+type ReleaseSeatsSuccess {
+  success: Boolean!
+}
+
+type ReleaseSeatsError {
+  message: String!
+}

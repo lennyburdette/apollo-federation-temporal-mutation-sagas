@@ -1,0 +1,36 @@
+type Mutation {
+  completeOrder(input: CompleteOrderInput!): CompleteOrderResult!
+}
+
+input CompleteOrderInput {
+  clientMutationId: ID!
+  orderId: ID!
+  paymentNonce: String!
+}
+
+union CompleteOrderResult =
+    CompleteOrderSuccess
+  | CompleteOrderError_SeatsUnavailable
+  | CompleteOrderError_PaymentFailed
+
+type CompleteOrderSuccess {
+  order: Order!
+  confirmationCode: String!
+}
+
+type CompleteOrderError_SeatsUnavailable {
+  seatsUnavailable: [Seat!]!
+  seatsAvailable: [Seat!]!
+}
+
+type CompleteOrderError_PaymentFailed {
+  failureReason: String!
+}
+
+type Order @key(fields: "id") @extends {
+  id: ID! @external
+}
+
+type Seat {
+  id: ID!
+}

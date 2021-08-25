@@ -1,0 +1,11 @@
+mutation SendOrderConfirmation($input: SendOrderInput!) {
+  sendOrderConfirmation(input: $input) {
+    __typename
+    ... on SendOrderConfirmationError {
+      message
+    }
+    ... on SendOrderConfirmationSuccess {
+      success
+    }
+  }
+}

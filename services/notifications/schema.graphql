@@ -1,0 +1,23 @@
+directive @tag(name: String!) repeatable on FIELD_DEFINITION
+
+type Mutation {
+  sendOrderConfirmation(input: SendOrderInput!): SendOrderConfirmationResult!
+    @tag(name: "internal")
+}
+
+input SendOrderInput {
+  email: String!
+  # TODO
+}
+
+union SendOrderConfirmationResult =
+    SendOrderConfirmationSuccess
+  | SendOrderConfirmationError
+
+type SendOrderConfirmationSuccess {
+  success: Boolean!
+}
+
+type SendOrderConfirmationError {
+  message: String!
+}

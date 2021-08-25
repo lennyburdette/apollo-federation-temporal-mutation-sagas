@@ -1,0 +1,11 @@
+mutation ReleaseSeats($input: ReleaseSeatsInput!) {
+  releaseSeats(input: $input) {
+    __typename
+    ... on ReleaseSeatsError {
+      message
+    }
+    ... on ReleaseSeatsSuccess {
+      success
+    }
+  }
+}

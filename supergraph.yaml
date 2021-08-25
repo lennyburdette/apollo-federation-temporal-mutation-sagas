@@ -1,0 +1,17 @@
+subgraphs:
+  inventory:
+    routing_url: http://inventory:4000/graphql
+    schema:
+      file: ./services/inventory/schema.graphql
+  orders:
+    routing_url: http://orders:4000/graphql
+    schema:
+      file: ./services/orders/schema.graphql
+  notifications:
+    routing_url: http://notifications:4000/graphql
+    schema:
+      file: ./services/notifications/schema.graphql
+  mutations:
+    routing_url: http://mutations:4000/graphql
+    schema:
+      file: ./temporal-mutations/schema.graphql

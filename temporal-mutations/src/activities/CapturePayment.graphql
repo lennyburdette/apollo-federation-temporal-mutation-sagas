@@ -1,0 +1,11 @@
+mutation CapturePayment($input: CapturePaymentInput!) {
+  capturePayment(input: $input) {
+    __typename
+    ... on CapturePaymentError {
+      message
+    }
+    ... on CapturePaymentSuccess {
+      confirmationCode
+    }
+  }
+}

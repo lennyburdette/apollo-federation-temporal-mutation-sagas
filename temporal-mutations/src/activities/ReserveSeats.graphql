@@ -1,0 +1,16 @@
+mutation ReserveSeats($input: ReserveSeatsInput!) {
+  reserveSeats(input: $input) {
+    __typename
+    ... on ReserveSeatsSuccess {
+      reservationId
+    }
+    ... on ReserveSeatsError_SeatsUnavailable {
+      seatsAvailable {
+        id
+      }
+      seatsUnavailable {
+        id
+      }
+    }
+  }
+}

@@ -1,0 +1,133 @@
+schema
+  @core(feature: "https://specs.apollo.dev/core/v0.1"),
+  @core(feature: "https://specs.apollo.dev/join/v0.1"),
+  @core(feature: "https://specs.apollo.dev/tag/v0.1")
+{
+  query: Query
+  mutation: Mutation
+}
+
+directive @core(feature: String!) repeatable on SCHEMA
+
+directive @join__field(graph: join__Graph, requires: join__FieldSet, provides: join__FieldSet) on FIELD_DEFINITION
+
+directive @join__type(graph: join__Graph!, key: join__FieldSet) repeatable on OBJECT | INTERFACE
+
+directive @join__owner(graph: join__Graph!) on OBJECT | INTERFACE
+
+directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+directive @tag(name: String!) repeatable on FIELD_DEFINITION
+
+type CapturePaymentError {
+  message: String!
+}
+
+input CapturePaymentInput {
+  paymentNonce: String!
+}
+
+union CapturePaymentResult = CapturePaymentError | CapturePaymentSuccess
+
+type CapturePaymentSuccess {
+  confirmationCode: String!
+}
+
+type CompleteOrderError_PaymentFailed {
+  failureReason: String!
+}
+
+type CompleteOrderError_SeatsUnavailable {
+  seatsAvailable: [Seat!]!
+  seatsUnavailable: [Seat!]!
+}
+
+input CompleteOrderInput {
+  clientMutationId: ID!
+  orderId: ID!
+  paymentNonce: String!
+}
+
+union CompleteOrderResult = CompleteOrderError_PaymentFailed | CompleteOrderError_SeatsUnavailable | CompleteOrderSuccess
+
+type CompleteOrderSuccess {
+  confirmationCode: String!
+  order: Order!
+}
+
+scalar join__FieldSet
+
+enum join__Graph {
+  INVENTORY @join__graph(name: "inventory" url: "http://inventory:4000/graphql")
+  MUTATIONS @join__graph(name: "mutations" url: "http://mutations:4000/graphql")
+  NOTIFICATIONS @join__graph(name: "notifications" url: "http://notifications:4000/graphql")
+  ORDERS @join__graph(name: "orders" url: "http://orders:4000/graphql")
+}
+
+type Mutation {
+  capturePayment(input: CapturePaymentInput!): CapturePaymentResult! @join__field(graph: ORDERS) @tag(name: "internal")
+  completeOrder(input: CompleteOrderInput!): CompleteOrderResult! @join__field(graph: MUTATIONS)
+  releaseSeats(input: ReleaseSeatsInput!): ReleaseSeatsResult! @join__field(graph: INVENTORY) @tag(name: "internal")
+  reserveSeats(input: ReserveSeatsInput!): ReserveSeatsResult! @join__field(graph: INVENTORY) @tag(name: "internal")
+  sendOrderConfirmation(input: SendOrderInput!): SendOrderConfirmationResult! @join__field(graph: NOTIFICATIONS) @tag(name: "internal")
+}
+
+type Order
+  @join__owner(graph: ORDERS)
+  @join__type(graph: ORDERS, key: "id")
+  @join__type(graph: MUTATIONS, key: "id")
+{
+  id: ID! @join__field(graph: ORDERS)
+  seats: [Seat!]! @join__field(graph: ORDERS)
+}
+
+type Query {
+  order(id: ID!): Order @join__field(graph: ORDERS)
+}
+
+type ReleaseSeatsError {
+  message: String!
+}
+
+input ReleaseSeatsInput {
+  reservationId: ID!
+}
+
+union ReleaseSeatsResult = ReleaseSeatsError | ReleaseSeatsSuccess
+
+type ReleaseSeatsSuccess {
+  success: Boolean!
+}
+
+type ReserveSeatsError_SeatsUnavailable {
+  seatsAvailable: [Seat!]!
+  seatsUnavailable: [Seat!]!
+}
+
+input ReserveSeatsInput {
+  seatIds: [ID!]!
+}
+
+union ReserveSeatsResult = ReserveSeatsError_SeatsUnavailable | ReserveSeatsSuccess
+
+type ReserveSeatsSuccess {
+  reservationId: ID!
+}
+
+type Seat {
+  id: ID!
+}
+
+type SendOrderConfirmationError {
+  message: String!
+}
+
+union SendOrderConfirmationResult = SendOrderConfirmationError | SendOrderConfirmationSuccess
+
+type SendOrderConfirmationSuccess {
+  success: Boolean!
+}
+
+input SendOrderInput {
+  email: String!
+}
